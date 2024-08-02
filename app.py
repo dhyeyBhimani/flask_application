@@ -1,4 +1,4 @@
-from flask import Flask ,render_template,request   
+from flask import Flask ,render_template,request,redirect 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 app = Flask(__name__)
@@ -18,16 +18,33 @@ def hello():
     if request.method == 'POST':
         title = request.form['Title']
         desc = request.form['Desc']
-        print("post")
         task = Routine(title =title, desc=desc)
         db.session.add(task)
         db.session.commit()
     alltask = Routine.query.all()
     return render_template('index.html',alltask = alltask)
 
-@app.route('/index')
-def index():
-    return 'this is an index page'
+@app.route('/delete/<int:Sno>')
+def delete(Sno):
+    alltask = Routine.query.filter_by(Sno = Sno).first()
+    db.session.delete(alltask)
+    db.session.commit()
+    return redirect("/")
+
+@app.route('/update/<int:Sno>',methods = ['GET','POST'])
+def update(Sno):
+    if request.method == 'POST':
+        title = request.form['Title']
+        desc = request.form['Desc']
+        alltask = Routine.query.filter_by(Sno = Sno).first()
+        alltask.title = title
+        alltask.desc = desc
+        db.session.add(alltask)
+        db.session.commit()
+        return redirect("/")
+    alltask = Routine.query.filter_by(Sno = Sno).first()
+    return render_template('update.html',alltask = alltask)
+    
 
 if __name__ == '__main__':
     with app.app_context():
