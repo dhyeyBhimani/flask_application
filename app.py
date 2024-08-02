@@ -1,8 +1,7 @@
-from flask import Flask , render_template,request   
+from flask import Flask ,render_template,request   
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 app = Flask(__name__)
-
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///task.db'
 db = SQLAlchemy(app)
 
@@ -11,7 +10,6 @@ class Routine(db.Model):
     title = db.Column(db.String(200),nullable=True)
     desc =  db.Column(db.String(500),nullable=True)
     date =  db.Column(db.DateTime,default = datetime.now())
-
     def __repr__(self):
         return f"{self.Sno} -- {self.title}"
 
